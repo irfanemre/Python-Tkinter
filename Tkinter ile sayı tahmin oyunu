@@ -1,0 +1,130 @@
+from tkinter import *
+from tkinter import messagebox
+from tkinter.constants import *
+import random
+import time
+########################################################
+def countDown():
+    clockWindow = Toplevel()
+    clockWindow.geometry("500x500")
+    clockWindow.title("Countdown Timer")
+    clockWindow.configure(background='dark green')
+
+    ###
+    L5 = Label(clockWindow,text='Ne Kadar Süre İstiyorsun?',fg='purple',bg='dark grey',font='Times 30 bold')
+    L5.pack(pady=15)
+
+    ### Declare variables
+    hourString = StringVar()
+    minuteString = StringVar()
+    secondString = StringVar()
+
+    ### Set strings to default value
+    hourString.set("00")
+    minuteString.set("00")
+    secondString.set("00")
+
+    ### Get user input
+    hourTextbox = Entry(clockWindow, width=3, font=("Calibri", 20, ""), textvariable=hourString)
+    minuteTextbox = Entry(clockWindow, width=3, font=("Calibri", 20, ""), textvariable=minuteString)
+    secondTextbox = Entry(clockWindow, width=3, font=("Calibri", 20, ""), textvariable=secondString)
+
+    ### Center textboxes
+    hourTextbox.place(x=170, y=180)
+    minuteTextbox.place(x=220, y=180)
+    secondTextbox.place(x=270, y=180)
+
+    def runTimer():
+        try:
+            clockTime = int(hourString.get())*3600 + int(minuteString.get())*60 + int(secondString.get())
+        except:
+            print("Incorrect values")
+
+        while(clockTime > -1):
+                
+            totalMinutes, totalSeconds = divmod(clockTime, 60)
+
+            totalHours = 0
+            if(totalMinutes > 60):
+                totalHours, totalMinutes = divmod(totalMinutes, 60)
+
+            hourString.set("{0:2d}".format(totalHours))
+            minuteString.set("{0:2d}".format(totalMinutes))
+            secondString.set("{0:2d}".format(totalSeconds))
+
+            ### Update the interface
+            clockWindow.update()
+            time.sleep(1)
+
+            ### Let the user know if the timer has expired
+            if(clockTime == 0):
+                boxCheck = messagebox.showinfo("", "Süreniz Doldu!\nArtık Yeni Bir Sayı Tuttum.")
+                if boxCheck:
+                    clockWindow.destroy()
+
+
+            clockTime -= 1
+
+
+    setTimeButton = Button(clockWindow, text='Set Time', bd='5', command=runTimer)
+    setTimeButton.place(relx=0.5, rely=0.5, anchor=CENTER)
+
+    ### Keep looping
+    clockWindow.mainloop()     
+#######################################################
+window = Tk()
+window.title('Sayı Tahmin Oyunu')      
+window.geometry('750x450+350+200')
+window.minsize(400,150)
+#window.wm_attributes('-alpha',0.88)
+window.config(bg='dark green')
+
+def randomsayı():
+    global randomsayi
+    randomsayi = random.randint(1,500)
+    #L4 = Label(window,text="Bilgisayarın Tuttuğu Sayı: {}".format(randomsayi),bg='black', fg='white',font='Times 15')
+    #L4.pack(pady=5)
+    
+def tahminet():
+    global x
+    kullanici_tahmin.get()
+    x = int(kullanici_tahmin.get())
+    kullanici_tahmin.delete(0,END)
+    if randomsayi == x:
+        messagebox.showinfo("Bilgilendirme","Tebrikler Tahmininiz Doğru!!!",)
+    elif randomsayi < x:
+        messagebox.showinfo("Bilgilendirme","Daha KÜÇÜK Bir Sayı Girmelisin",)
+    elif randomsayi > x:
+        messagebox.showinfo("Bilgilendirme","Daha BÜYÜK Bir Sayı Girmelisin",)
+
+def tekraroyna():
+    randomsayı()
+   
+def cıkıs():
+    yesno_check = messagebox.askyesno('Çıkış', "Gerçekten Çıkmak İstiyor Musun?",icon='warning')
+    if yesno_check:
+        window.destroy()
+        tekraroyna()  
+
+   
+L1 = Label(window,text='Tuttuğum Sayıyı Bil!!!',fg='purple',bg='dark grey',font='Times 30 bold')
+L1.pack(pady=15)
+L2 = Label(window,text='1 ile 500 arasında bir sayı tuttum.',font='Times 20')
+L2.pack(pady=15)
+L3 = Label(window,text="Aşağıdaki kutucuğa tahminini gir ve 'Tahmin Et' butonuna tıkla",font='Times 15')
+L3.pack(pady=5)
+
+kullanici_tahmin = Entry(window, justify='center',bd=2)
+kullanici_tahmin.pack()
+
+
+buton1 = Button(window, text='Tahmin Et', bd=5, command=tahminet)
+buton1.pack(side=LEFT,padx=10)
+buton2 = Button(window, text='Oyundan Çık', bd=5, command=cıkıs)
+buton2.pack(side=RIGHT,padx=10)
+buton3 = Button(window, text='Tekrar Oyna', bd=5, command=tekraroyna)
+buton3.pack(side=RIGHT, padx=45)
+buton4 = Button(window, text='Geri Sayım ile Oyna', bd=5, command=countDown)
+buton4.pack(side=RIGHT, padx=45)
+
+window.mainloop()
